@@ -1,0 +1,129 @@
+class Glitch {
+  constructor(ramp_, inp_){
+    this.inp = inp_;
+
+    this.pgTextSize = 2;
+    this.findTextSize();
+
+    this.pgA;
+    this.drawTextures();
+
+    this.ticker = 0;
+
+    this.ramp = ramp_;
+
+    this.splitCount = 0;
+    this.splitH = [];
+    this.animXmax = [];
+    this.animX = [];
+  
+    var culmH = 0;
+    while(culmH < 1){
+      this.splitH[this.splitCount] = random(0.3);
+      this.animXmax[this.splitCount] = random(-width/32 * this.splitCount, width/32 * this.splitCount);
+      this.animX[this.splitCount] = 0;
+
+      culmH += this.splitH[this.splitCount];
+      this.splitCount ++;
+    }
+
+    var remainder = culmH - this.splitH[this.splitCount];
+    this.splitH[this.splitCount] = 1 - remainder;
+
+  }
+
+  update(){
+    this.ticker ++;
+
+    var tk0 = map(this.ticker, 0, sceneLength, 0, 1);
+    var tk1;
+
+    for(var m = 0; m < this.splitCount; m++){
+      let a, b;
+      if(tk0 < 0.5){
+        var tk0b = map(tk0, 0, 0.5, 0, 1);
+        tk1 = easeOutExpo(tk0b);
+        a = 0;
+        b = this.animXmax[m]/2;
+      } else {
+        var tk0b = map(tk0, 0.5, 1, 0, 1);
+        tk1 = easeInExpo(tk0b);
+        a = this.animXmax[m]/2;
+        b = this.animXmax[m];
+      }
+      this.animX[m] = map(tk1, 0, 1, a, b);
+    }
+  }
+
+  display(){
+    background(bkgdColor);
+
+    push();
+      translate(width/2, height/2);
+
+      scale(0.75);
+      translate(-this.pgA.width/2, -this.pgA.height/2);
+
+      texture(this.pgA);
+      // stroke(0,0,255);
+      noStroke();
+
+      var culmH = 0;
+      for(var m = 0; m < this.splitCount; m++){
+        var vTop = map(culmH, 0, this.pgA.height, 0, 1);
+        var vBot = map(culmH + this.pgA.height * this.splitH[m], 0, this.pgA.height, 0, 1);
+
+        push();
+          translate(this.animX[m], culmH);
+          beginShape(TRIANGLE_STRIP);
+            vertex(0, 0, 0, vTop);
+            vertex(0, this.pgA.height * this.splitH[m], 0, vBot);
+            vertex(this.pgA.width, 0, 1, vTop);
+            vertex(this.pgA.width, this.pgA.height * this.splitH[m], 1, vBot);
+          endShape();
+        pop();
+
+        culmH += this.pgA.height * this.splitH[m];
+        // rect(this.animX[m], 0, this.pgA.width, this.splitH[m] * this.pgA.height);
+        // translate(0, this.splitH[m] * this.pgA.height);
+      }
+
+    pop();
+  }
+
+  findTextSize(){
+    var measured = 0;
+    while(measured < width){
+      textSize(this.pgTextSize)
+      textFont(currentFont);
+      measured = textWidth(this.inp);
+
+      this.pgTextSize += 2;
+    }
+
+    if(this.pgTextSize * thisFontAdjust > height * 7/8){
+      this.pgTextSize = (height * 7/8)/thisFontAdjust;
+    }
+  }
+
+  drawTextures(){
+    textSize(this.pgTextSize);
+    textFont(currentFont);
+    var repeatSize = round(textWidth(this.inp));
+  
+    this.pgA = createGraphics(repeatSize, this.pgTextSize * (thisFontAdjust + 0.05));
+    this.pgA.background(bkgdColor);
+  
+    this.pgA.fill(foreColor);
+    this.pgA.noStroke();
+    this.pgA.textSize(this.pgTextSize);
+    this.pgA.textAlign(CENTER);
+    this.pgA.textFont(currentFont);
+    var thisAdjust = this.pgA.height/2 + this.pgTextSize * thisFontAdjust/2 + this.pgTextSize * thisFontAdjustUp;
+    this.pgA.text(this.inp, this.pgA.width/2, thisAdjust);
+  }
+
+  removeGraphics(){
+    this.pgA.remove();
+  }
+}
