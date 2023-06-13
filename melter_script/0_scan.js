@@ -1,4 +1,4 @@
-class Bend {
+class Scan {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
@@ -18,13 +18,27 @@ class Bend {
 
     this.ramp = ramp_;
 
-    this.res = 200;
-    this.xSpace = this.pgA.width/this.res;
-    this.yTopAnim;
-    this.yBotAnim;
+    this.res = 100;
+    this.ySpace = this.pgA.height/this.res;
+    
+    this.xAnim = [];
+    this.xAnimMax = [];
 
-    this.yTopCorner = (height - this.pgA.height)/2;
-    this.yBotCorner = (height - this.pgA.height)/2 + this.pgA.height;
+    for(var m = 0; m < this.res; m++){
+      this.xAnim[m] = 0;
+
+      var noiseCone = 0;
+      if(m < this.res/2){
+        var tk0 = map(m, 0, this.res/2, 0, 1);
+        noiseCone = map(easeInOutQuad(tk0), 0, 1, 0, -300);
+      } else {
+        var tk0 = map(m, this.res/2, this.res, 0, 1);
+        noiseCone = map(easeInOutQuad(tk0), 0, 1, -300, 0);
+      }
+
+      noiseDetail(2, 0.1);
+      this.xAnimMax[m] = map(noise(m * 0.06), 0, 1, -noiseCone, noiseCone);
+    }
   }
 
   update(){
@@ -32,29 +46,19 @@ class Bend {
 
     var tk0 = map(this.ticker, 0, sceneLength, 0, 1);
     var tk1;
-
-    let a0, b0;
-    let a1, b1;
     if(tk0 < 0.5){
       var tk0b = map(tk0, 0, 0.5, 0, 1);
       tk1 = easeOutExpo(tk0b);
-      a0 = 0;
-      b0 = -this.yTopCorner/2;
-
-      a1 = this.pgA.height;
-      b1 = (this.yBotCorner + this.pgA.height)/2;
+      for(var m = 0; m < this.res; m++){
+        this.xAnim[m] = map(tk1, 0, 1, 0, this.xAnimMax[m]/2);
+      }
     } else {
       var tk0b = map(tk0, 0.5, 1, 0, 1);
       tk1 = easeInExpo(tk0b);
-      a0 = -this.yTopCorner/2;
-      b0 = -this.yTopCorner;
-
-      a1 = (this.yBotCorner + this.pgA.height)/2;
-      b1 = this.yBotCorner;
+      for(var m = 0; m < this.res; m++){
+        this.xAnim[m] = map(tk1, 0, 1, this.xAnimMax[m]/2, this.xAnimMax[m]);
+      }
     }
-
-    this.yTopAnim = map(tk1, 0, 1, a0, b0);
-    this.yBotAnim = map(tk1, 0, 1, a1, b1);
   }
 
   display(){
@@ -69,16 +73,14 @@ class Bend {
 
       beginShape(TRIANGLE_STRIP);
         for(var n = 0; n <= this.res; n++){
-          let t = n / this.res;
+          var xL = 0;
+          var xR = this.pgA.width;
+          var y = n * this.ySpace;
 
-          let x = bezierPoint(0, width/2, width/2, width, t);
-          let yTop = bezierPoint(this.yTopAnim, 0, 0, this.yTopAnim, t);
-          let yBot = bezierPoint(this.yBotAnim, this.pgA.height, this.pgA.height, this.yBotAnim, t);
+          var v = map(n, 0, this.res, 0, 1);
 
-          var u = map(x, 0, this.pgA.width, 0, 1);
-
-          vertex(x, yTop, u, 0);
-          vertex(x, yBot, u, 1);
+          vertex(xL + this.xAnim[n], y, 0, v);
+          vertex(xR + this.xAnim[n], y, 1, v);
         }
       endShape();
     pop();

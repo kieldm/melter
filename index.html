@@ -4,7 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>STG _v.Melter</title>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
+  <!-- <script src="resources/p5.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
   <script src="https://unpkg.com/h264-mp4-encoder/embuild/dist/h264-mp4-encoder.web.js"></script>
 
   <link rel="stylesheet" href="style.css">
@@ -30,6 +31,9 @@
   <script src="melter_script/0_droop.js" type="text/javascript"></script>
   <script src="melter_script/0_glitch.js" type="text/javascript"></script>
   <script src="melter_script/0_scatter.js" type="text/javascript"></script>
+  <script src="melter_script/0_scan.js" type="text/javascript"></script>
+  <script src="melter_script/0_oddone.js" type="text/javascript"></script>
+  <script src="melter_script/0_slitscan.js" type="text/javascript"></script>
 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300&display=swap" rel="stylesheet">
@@ -86,7 +90,6 @@
                 <input type="checkbox" id="shutters2" name="shutters2" value=4 onclick="setScene(4)" checked>
                 <label for="shutters2">Shutter2</label>
               </div>
-
               <div class="listItem">
                 <input type="checkbox" id="slotmachine" name="slotmachine" value=5 onclick="setScene(5)" checked>
                 <label for="slotmachine">Slots</label>
@@ -95,18 +98,16 @@
                 <input type="checkbox" id="snap" name="snap" value=6 onclick="setScene(6)" checked>
                 <label for="snap">Snap</label>
               </div>
-            </div>
-            <div class="checksColumn">
-
               <div class="listItem">
                 <input type="checkbox" id="split" name="split" value=7 onclick="setScene(7)" checked>
                 <label for="split">Split</label>
               </div>
-
               <div class="listItem">
                 <input type="checkbox" id="twist" name="twist" value=8 onclick="setScene(8)" checked>
                 <label for="twist">Twist</label>
               </div>
+            </div>
+            <div class="checksColumn">
 
               <!-- MELT EXCLUSIVES -->
               <div class="listItem">
@@ -120,6 +121,18 @@
               <div class="listItem">
                 <input type="checkbox" id="scatter" name="scatter" value=11 onclick="setScene(11)" checked>
                 <label for="scatter">Scatter</label>
+              </div>
+              <div class="listItem">
+                <input type="checkbox" id="scan" name="scan" value=12 onclick="setScene(12)" checked>
+                <label for="scan">Scan</label>
+              </div>
+              <div class="listItem">
+                <input type="checkbox" id="oddone" name="oddone" value=13 onclick="setScene(13)" checked>
+                <label for="oddone">Odd One</label>
+              </div>
+              <div class="listItem">
+                <input type="checkbox" id="slitscan" name="slitscan" value=14 onclick="setScene(14)" checked>
+                <label for="slitscan">Slit Scan</label>
               </div>
             </div>
           </div>
@@ -144,6 +157,10 @@
           <div class="couplingEntry">
             <input type="radio" id="vert" name="saveSize" value=1 onclick="sizeSaveChange(this.value)">
             <label for="vert">Vertical, 9:16</label>
+          </div>
+          <div class="couplingEntry">
+            <input type="radio" id="horz" name="saveSize" value=3 onclick="sizeSaveChange(this.value)">
+            <label for="horz">Horizontal, 16:9</label>
           </div>
           <div class="couplingEntry">
             <input type="radio" id="squa" name="saveSize" value=2 onclick="sizeSaveChange(this.value)">

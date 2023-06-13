@@ -2,6 +2,7 @@ class Snap {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
+    this.currentFont = tFont[int(random(4))];
     this.pgTextSize = 2;
     this.findTextSize();
     
@@ -18,7 +19,6 @@ class Snap {
     this.ramp = ramp_;
 
     this.pacer = (sceneLength/8)/this.inp.length;
-
   }
 
   update(){
@@ -66,21 +66,16 @@ class Snap {
   display(){
     background(bkgdColor);
 
-    fill(foreColor);
-    noStroke();
-
     push();
       translate(width/2, height/2);
       translate(this.xStart, 0);
       translate(0, this.pgTextSize * thisFontAdjust/2);
 
-      textFont(currentFont);
+      textFont(this.currentFont);
       textSize(this.pgTextSize);
       textAlign(CENTER);
       for(var n = 0; n < this.inp.length; n++){
         push();
-          fill(foreColor);
-          noStroke();
           shearX(this.xShear[n]);
           scale(this.xScale[n], 1);
           text(this.inp.charAt(n), 0, 0);
@@ -91,7 +86,7 @@ class Snap {
   }
 
   findSpacing(){
-    textFont(currentFont);
+    textFont(this.currentFont);
     textSize(this.pgTextSize);
 
     for(var n = 0; n < this.inp.length; n++){
@@ -111,7 +106,7 @@ class Snap {
     var measured = 0;
     while(measured < width){
       textSize(this.pgTextSize)
-      textFont(currentFont);
+      textFont(this.currentFont);
       measured = textWidth(this.inp);
 
       this.pgTextSize += 2;

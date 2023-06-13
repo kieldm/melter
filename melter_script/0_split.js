@@ -2,6 +2,12 @@ class Split {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
+    this.strokeOn = false;
+    if(random(10) < 5){
+      this.strokeOn = true;
+    }
+
+    this.currentFont = tFont[int(random(4))];
     this.pgTextSize = 2;
     this.findTextSize();
 
@@ -31,6 +37,7 @@ class Split {
     this.animXmax[0] = this.direction * -100;
     this.animXmax[1] = this.direction * 50;
     this.animXmax[2] = this.direction * 25;
+
   }
 
   update(){
@@ -81,6 +88,7 @@ class Split {
       translate(-this.pgA.width/2, -this.pgA.height/2);
 
       texture(this.pgA);
+      noStroke();
 
       for(var m = 0; m < 3; m++){
         translate(this.animX[m], 0);
@@ -99,7 +107,7 @@ class Split {
     var measured = 0;
     while(measured < width){
       textSize(this.pgTextSize)
-      textFont(currentFont);
+      textFont(this.currentFont);
       measured = textWidth(this.inp);
 
       this.pgTextSize += 2;
@@ -112,17 +120,23 @@ class Split {
 
   drawTextures(){
     textSize(this.pgTextSize);
-    textFont(currentFont);
+    textFont(this.currentFont);
     var repeatSize = round(textWidth(this.inp));
   
     this.pgA = createGraphics(repeatSize, this.pgTextSize * (thisFontAdjust + 0.05));
     this.pgA.background(bkgdColor);
   
-    this.pgA.fill(foreColor);
-    this.pgA.noStroke();
+    if(this.strokeOn){
+      this.pgA.stroke(foreColor);
+      this.pgA.strokeWeight(3);
+      this.pgA.noFill();
+    } else {
+      this.pgA.fill(foreColor);
+      this.pgA.noStroke();
+    }
     this.pgA.textSize(this.pgTextSize);
     this.pgA.textAlign(CENTER);
-    this.pgA.textFont(currentFont);
+    this.pgA.textFont(this.currentFont);
     var thisAdjust = this.pgA.height/2 + this.pgTextSize * thisFontAdjust/2 + this.pgTextSize * thisFontAdjustUp;
     this.pgA.text(this.inp, this.pgA.width/2, thisAdjust);
   }

@@ -41,6 +41,9 @@ function clearAllScenes(){
   document.getElementById('droop').checked = false;
   document.getElementById('glitch').checked = false;
   document.getElementById('scatter').checked = false;
+  document.getElementById('scan').checked = false;
+  document.getElementById('oddone').checked = false;
+  document.getElementById('slitscan').checked = false;
 
   sceneCount = 0;
 }

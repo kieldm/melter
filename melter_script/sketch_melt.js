@@ -20,9 +20,9 @@ var currentFont = 0;
 var thisFontAdjust = 0.7;
 var thisFontAdjustUp = -0.2;
 
-var flashCount = 12;
+var flashCount = 15;
 var sceneOn = [];
-var sceneCount = 12;
+var sceneCount = flashCount;
 
 var widgetOn = true;
 
@@ -45,9 +45,13 @@ let colorSwapOn = true;
 
 let sHold = 0;
 
+let trackFactor = 0.06;
+
 function preload(){
-  tFont[0] = loadFont("resources/Archivo-Medium.ttf");
-  tFont[1] = loadFont("resources/Archivo-Black.ttf");
+  tFont[0] = loadFont("resources/Archivo-Light.ttf");
+  tFont[1] = loadFont("resources/Archivo-Regular.ttf");
+  tFont[2] = loadFont("resources/Archivo-Medium.ttf");
+  tFont[3] = loadFont("resources/Archivo-SemiBold.ttf");
 
   currentFont = tFont[1];
   thisFontAdjust = 0.7;
@@ -154,6 +158,15 @@ function pickScene(){
       } else if(rs0 > 110 && rs0 <= 120 && sceneOn[11]) {
         mainFlash = new Scatter(rampCounter%2, currentText);
         sceneSelecting = false;
+      } else if(rs0 > 120 && rs0 <= 130 && sceneOn[12]) {
+        mainFlash = new Scan(rampCounter%2, currentText);
+        sceneSelecting = false;
+      } else if(rs0 > 130 && rs0 <= 140 && sceneOn[13]) {
+        mainFlash = new OddOne(rampCounter%2, currentText);
+        sceneSelecting = false;
+      } else if(rs0 > 140 && rs0 <= 150 && sceneOn[14]) {
+        mainFlash = new SlitScan(rampCounter%2, currentText);
+        sceneSelecting = false;
       } else {
         rs0 = random(flashCount * 10);
       }
@@ -184,6 +197,8 @@ function resizeForSave(){
     resizeCanvas(1080, 1920, WEBGL);
   } else if(saveMode == 2){
     resizeCanvas(1080, 1080, WEBGL);
+  } else if(saveMode == 3){
+    resizeCanvas(1920, 1080, WEBGL);
   }
 }
 
@@ -208,6 +223,15 @@ function resizeForPreview(){
     } else {
       tempHeight = windowHeight;
       tempWidth = windowHeight;
+    }
+    resizeCanvas(tempWidth, tempHeight, WEBGL);
+  } else if(saveMode == 3){
+    if(windowWidth > windowHeight * 16/9){
+      tempHeight = windowHeight;
+      tempWidth = windowHeight * 16/9;
+    } else {
+      tempWidth = windowWidth;
+      tempHeight = windowWidth * 9/16;
     }
     resizeCanvas(tempWidth, tempHeight, WEBGL);
   }

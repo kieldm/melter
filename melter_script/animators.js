@@ -35,6 +35,10 @@ function aSet3(ticker, influ){          // takes a 0 - 1 and returns an eased 0 
   return targetPoint;
 }
 
+function easeOutCubic(ticker) {
+  return 1 - pow(1 - ticker, 3);
+}
+
 function easeInQuad(ticker) {
   return ticker * ticker;
 }

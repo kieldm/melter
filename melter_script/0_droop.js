@@ -2,6 +2,12 @@ class Droop {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
+    this.strokeOn = false;
+    if(random(10) < 5){
+      this.strokeOn = true;
+    }
+
+    this.currentFont = tFont[int(random(4))];
     this.pgTextSize = 2;
     this.findTextSize();
 
@@ -44,7 +50,6 @@ class Droop {
       } else {
         this.yDroop[m] = random(20, height/3);
       }
-
     }
   }
 
@@ -154,7 +159,7 @@ class Droop {
     var measured = 0;
     while(measured < width){
       textSize(this.pgTextSize)
-      textFont(currentFont);
+      textFont(this.currentFont);
       measured = textWidth(this.inp);
 
       this.pgTextSize += 2;
@@ -167,17 +172,23 @@ class Droop {
 
   drawTextures(){
     textSize(this.pgTextSize);
-    textFont(currentFont);
+    textFont(this.currentFont);
     var repeatSize = round(textWidth(this.inp));
   
     this.pgA = createGraphics(repeatSize, this.pgTextSize * (thisFontAdjust + 0.05));
     this.pgA.background(bkgdColor);
   
-    this.pgA.fill(foreColor);
-    this.pgA.noStroke();
+    if(this.strokeOn){
+      this.pgA.stroke(foreColor);
+      this.pgA.strokeWeight(2);
+      this.pgA.fill(bkgdColor);
+    } else {
+      this.pgA.fill(foreColor);
+      this.pgA.noStroke();
+    }
     this.pgA.textSize(this.pgTextSize);
     this.pgA.textAlign(CENTER);
-    this.pgA.textFont(currentFont);
+    this.pgA.textFont(this.currentFont);
     var thisAdjust = this.pgA.height/2 + this.pgTextSize * thisFontAdjust/2 + this.pgTextSize * thisFontAdjustUp;
     this.pgA.text(this.inp, this.pgA.width/2, thisAdjust);
   }

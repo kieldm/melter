@@ -1,4 +1,4 @@
-class Shutters {
+class OddOne {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
@@ -20,6 +20,20 @@ class Shutters {
     this.pg = [];
     this.makeTextures();
 
+    // this.theOddOne = int(random(1,this.inp.length-1));
+    this.theOddOne = int(random(this.inp.length));
+    this.res = 100;
+
+    this.xAnim = [];
+    this.xAnimMax = [];
+    this.rAnim = 0;
+    this.rAnimMax = random(-PI/4, PI/4);
+
+    this.ySpace = this.pg[0].height/this.res;
+    this.waveSize = 25;
+    this.waveOffset1 = 0.025;
+    this.waveOffset2 = 0.1;
+
     this.ticker = 0;
 
     this.shutterAnim = [];
@@ -28,45 +42,51 @@ class Shutters {
 
     this.ramp = ramp_;
 
-    this.pacer = (sceneLength/4)/this.inp.length;
+    // this.pacer = (sceneLength/4)/this.inp.length;
+
+    for(var m = 0; m < this.res; m++){
+      this.xAnim[m] = 0;
+      this.xAnimMax[m] = sin(m * this.waveOffset1) * sin(-m * this.waveOffset2) * this.waveSize;
+    }
   }
 
   update(){
     this.ticker ++;
 
-    for(var n = 0; n < this.inp.length; n++){
-      var tk00 = constrain(this.ticker - this.pacer*n, 0, sceneLength);
-      var tk0 = map(tk00, 0, sceneLength, 0, 1.0);
+    // for(var n = 0; n < this.inp.length; n++){
+    //   var tk00 = constrain(this.ticker - this.pacer*n, 0, sceneLength);
+    //   var tk0 = map(tk00, 0, sceneLength, 0, 1.0);
 
-      var tk1;
-      var a0, b0;
-      var a1, b1;
-      var a2, b2;
-      if(tk0 < 0.5){
-        var tk0b = map(tk0, 0, 0.5, 0, 1);
-        tk1 = easeOutExpo(tk0b);
-        a0 = this.pg[n].height;
-        b0 = 0;
-        a1 = this.pg[n].height;
-        b1 = this.pg[n].height;
+    //   var tk1;
 
-        a2 = this.pg[0].height/2;
-        b2 = 0;
-      } else {
-        var tk0b = map(tk0, 0.5, 1, 0, 1);
-        tk1 = easeInExpo(tk0b);
-        a0 = 0;
-        b0 = 0;
-        a1 = this.pg[n].height;
-        b1 = 0;
+    //   if(tk0 < 0.5){
+    //     var tk0b = map(tk0, 0, 0.5, 0, 1);
+    //     tk1 = easeOutExpo(tk0b);
+    //   } else {
+    //     var tk0b = map(tk0, 0.5, 1, 0, 1);
+    //     tk1 = easeInExpo(tk0b);
+    //   }
 
-        a2 = 0;
-        b2 = -this.pg[0].height/2;
+    //   // this.shutterAnim[n] = map(tk1, 0, 1, a0, b0);
+    // }
+    var tk00 = constrain(this.ticker, 0, sceneLength);
+    var tk0 = map(tk00, 0, sceneLength, 0, 1.0);
+    if(tk0 < 0.5){
+      var tk0b = map(tk0, 0, 0.5, 0, 1);
+      var tk1 = easeOutExpo(tk0b);
+
+      this.rAnim = map(tk1, 0, 1, 0, this.rAnimMax/2);
+      for(var m = 0; m < this.res; m++){
+        this.xAnim[m] = map(tk1, 0, 1, 0, this.xAnimMax[m]);
       }
-
-      this.shutterAnim[n] = map(tk1, 0, 1, a0, b0);
-      this.shutterAnimBot[n] = map(tk1, 0, 1, a1, b1);
-      this.shutterYanim[n] = map(tk1, 0, 1, a2, b2);
+    } else {
+      var tk0b = map(tk0, 0.5, 1, 0, 1);
+      tk1 = easeInExpo(tk0b);
+    
+      this.rAnim = map(tk1, 0, 1, this.rAnimMax/2, this.rAnimMax);
+      for(var m = 0; m < this.res; m++){
+        this.xAnim[m] = map(tk1, 0, 1, this.xAnimMax[m], this.xAnimMax[m] * 2);
+      }
     }
   }
 
@@ -78,20 +98,33 @@ class Shutters {
 
       for(var n = 0; n < this.inp.length; n++){
         push();
-          translate(this.xSpots[n], this.shutterYanim[n]);
+          translate(this.xSpots[n], 0);
 
-          texture(this.pg[n]);
+          // stroke(0,0,255);
           noStroke();
+          texture(this.pg[n]);
 
-          var vTop = map(this.shutterAnimBot[n], 0, this.pg[n].height, 1, 0);
-          var vBot = map(this.pg[n].height - this.shutterAnim[n], 0, this.pg[n].height, 0, 1);
+          if(n == this.theOddOne){
+            translate(this.pg[n].width/2, this.pg[n].height/2);
+            rotateZ(this.rAnim);
+            translate(-this.pg[n].width/2, -this.pg[n].height/2);
 
-          beginShape(TRIANGLE_STRIP);
-            vertex(0, this.shutterAnim[n], 0, vTop);
-            vertex(0, this.shutterAnimBot[n], 0, vBot);
-            vertex(this.pg[n].width, this.shutterAnim[n], 1, vTop);
-            vertex(this.pg[n].width, this.shutterAnimBot[n], 1, vBot);
-          endShape();
+            // ellipse(0, 0, 20, 20);
+            beginShape(TRIANGLE_STRIP);
+              for(var m = 0; m <= this.res; m++){
+                var xL = 0 + this.xAnim[m];
+                var xR = this.pg[n].width + this.xAnim[m];
+                var y = m * this.ySpace;
+
+                var v = map(m, 0, this.res, 0, 1);
+                vertex(xL, y, 0, v);
+                vertex(xR, y, 1, v);
+              }
+            endShape();
+          } else {
+            rect(0, 0, this.pg[n].width, this.pg[n].height);
+          }
+
         pop();
       }
     pop();

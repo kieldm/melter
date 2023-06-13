@@ -2,9 +2,13 @@ class Arcer {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
+    this.track = -20;
+    this.currentFont = tFont[int(random(4))];
     this.pgTextSize = 2;
     this.findTextSize();
     
+    this.track = -this.pgTextSize * trackFactor;
+    this.trackFix = -(this.inp.length - 1) * this.track/2;
     this.xSpots = [];
     this.findXpos();
 
@@ -48,7 +52,7 @@ class Arcer {
   display(){
     background(bkgdColor);
     push();
-      translate(0, (this.pgTextSize * thisFontAdjust)/2);
+      translate(this.trackFix, (this.pgTextSize * thisFontAdjust)/2);
       textSize(this.pgTextSize);
       textAlign(LEFT);
 
@@ -66,7 +70,7 @@ class Arcer {
   }
 
   findXpos(){
-    textFont(currentFont);
+    textFont(this.currentFont);
     textSize(this.pgTextSize);
     var fullSize = textWidth(this.inp);
     var xStart = width/2 - fullSize/2;
@@ -75,7 +79,7 @@ class Arcer {
       var thisLetterWidth = textWidth(this.inp.charAt(n));
       var upUntilWidth = textWidth(this.inp.slice(0,n+1));
       var difference = upUntilWidth - thisLetterWidth;
-      this.xSpots[n] = xStart + difference;
+      this.xSpots[n] = xStart + difference + n * this.track;
     }
   }
 
@@ -90,9 +94,9 @@ class Arcer {
 
   findTextSize(){
     var measured = 0;
-    while(measured < width){
+    while(measured < (width - (this.inp.length - 1) * this.track)){
       textSize(this.pgTextSize)
-      textFont(currentFont);
+      textFont(this.currentFont);
       measured = textWidth(this.inp);
 
       this.pgTextSize += 2;

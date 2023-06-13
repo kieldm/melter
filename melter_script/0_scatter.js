@@ -2,6 +2,7 @@ class Scatter {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
+    this.currentFont = tFont[int(random(4))];
     this.pgTextSize = 2;
     this.findTextSize();
     
@@ -70,7 +71,7 @@ class Scatter {
   }
 
   findXpos(){
-    textFont(currentFont);
+    textFont(this.currentFont);
     textSize(this.pgTextSize);
     var fullSize = textWidth(this.inp);
     var xStart = width/2 - fullSize/2;
@@ -105,7 +106,7 @@ class Scatter {
     var measured = 0;
     while(measured < width){
       textSize(this.pgTextSize)
-      textFont(currentFont);
+      textFont(this.currentFont);
       measured = textWidth(this.inp);
 
       this.pgTextSize += 2;

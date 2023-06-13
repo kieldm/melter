@@ -2,6 +2,13 @@ class BugEyes {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
+    this.strokeOn = false;
+    if(random(10) < 5){
+      this.strokeOn = true;
+    }
+
+    this.track = -20;
+    this.currentFont = tFont[int(random(4))];
     this.repeats;
     this.pgTextSize = 2;
     this.findTextSize();
@@ -11,6 +18,8 @@ class BugEyes {
 
     this.ticker = 0;
 
+    this.track = -this.pgTextSize * trackFactor;
+    this.trackFix = -(this.inp.length - 1) * this.track/2;
     this.xSpots = [];
     this.shutterAnim = [];
     this.shutterAnimBot = [];
@@ -59,15 +68,11 @@ class BugEyes {
 
   display(){
     background(bkgdColor);
+    noStroke();
+
     push();
       translate(0, height/2);
-      translate(0, -this.pg[0].height/2);
-
-      textSize(this.pgTextSize);
-      textAlign(LEFT);
-
-      fill(foreColor);
-      noStroke();
+      translate(this.trackFix, -this.pg[0].height/2);
 
       for(var n = 0; n < this.inp.length; n++){
         push();
@@ -97,7 +102,7 @@ class BugEyes {
   }
 
   findXpos(){
-    textFont(currentFont);
+    textFont(this.currentFont);
     textSize(this.pgTextSize);
     var fullSize = textWidth(this.inp);
     var xStart = width/2 - fullSize/2;
@@ -109,15 +114,15 @@ class BugEyes {
       var thisLetterWidth = textWidth(this.inp.charAt(n));
       var upUntilWidth = textWidth(this.inp.slice(0,n+1));
       var difference = upUntilWidth - thisLetterWidth;
-      this.xSpots[n] = xStart + difference;
+      this.xSpots[n] = xStart + difference + n * this.track;
     }
   }
 
   findTextSize(){
     var measured = 0;
-    while(measured < width){
+    while(measured < (width - (this.inp.length - 1) * this.track)){
       textSize(this.pgTextSize)
-      textFont(currentFont);
+      textFont(this.currentFont);
       measured = textWidth(this.inp);
 
       this.pgTextSize += 2;
@@ -130,19 +135,25 @@ class BugEyes {
 
   makeTextures(){
     textSize(this.pgTextSize);
-    textFont(currentFont);
+    textFont(this.currentFont);
 
     for(var n = 0; n < this.inp.length; n++){
       var repeatSize = round(textWidth(this.inp.charAt(n)));
     
       this.pg[n] = createGraphics(repeatSize, this.pgTextSize * (thisFontAdjust + 0.05));
-      this.pg[n].background(bkgdColor);
+      // this.pg[n].background(bkgdColor);
     
-      this.pg[n].fill(foreColor);
-      this.pg[n].noStroke();
+      if(this.strokeOn){
+        this.pg[n].stroke(foreColor);
+        this.pg[n].strokeWeight(3);
+        this.pg[n].fill(bkgdColor);
+      } else {
+        this.pg[n].fill(foreColor);
+        this.pg[n].noStroke();
+      }
       this.pg[n].textSize(this.pgTextSize);
       this.pg[n].textAlign(CENTER);
-      this.pg[n].textFont(currentFont);
+      this.pg[n].textFont(this.currentFont);
       var thisAdjust = this.pg[n].height/2 + this.pgTextSize * thisFontAdjust/2 + this.pgTextSize * thisFontAdjustUp;
       this.pg[n].text(this.inp.charAt(n), this.pg[n].width/2, thisAdjust);
     }
