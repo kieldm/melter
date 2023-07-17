@@ -85,8 +85,8 @@ class Arcer {
       textSize(this.pgTextSize);
       textAlign(LEFT);
 
-      fill(foreColor);
-      noStroke();
+      // fill(foreColor);
+      // noStroke();
 
       // translate(this.wids[0]/4, 0);
       for(var n = 0; n < this.inp.length; n++){

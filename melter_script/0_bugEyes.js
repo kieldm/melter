@@ -3,7 +3,9 @@ class BugEyes {
     this.inp = inp_;
 
     this.strokeOn = false;
-    if(random(10) < 5){
+    if(fillStyle == 1){
+      this.strokeOn = true;
+    } else if(fillStyle == 2 && random(10) < 5){
       this.strokeOn = true;
     }
 
@@ -167,7 +169,7 @@ class BugEyes {
     
       if(this.strokeOn){
         this.pg[n].stroke(foreColor);
-        this.pg[n].strokeWeight(3);
+        this.pg[n].strokeWeight(textStrokeWeight);
         this.pg[n].fill(bkgdColor);
       } else {
         this.pg[n].fill(foreColor);

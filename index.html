@@ -65,19 +65,24 @@
           <option value="5">Archivo - Black</option>
         </select>
 
-        <div class="coupling2">
+        <div class="coupling3">
           <div class="couplingEntry">
-            <input type="radio" id="window" name="saveSize" value=0 onclick="sizeSaveChange(this.value)" checked>
-            <label for="window">Solid</label>
+            <input type="radio" id="solid" name="setFillStyle" value=0 onclick="setFillStyle(this.value)" checked>
+            <label for="solid">Solid</label>
           </div>
           <div class="couplingEntry">
-            <input type="radio" id="vert" name="saveSize" value=1 onclick="sizeSaveChange(this.value)">
-            <label for="vert">Outline</label>
+            <input type="radio" id="outline" name="setFillStyle" value=1 onclick="setFillStyle(this.value)">
+            <label for="outline">Stroke</label>
           </div>
           <div class="couplingEntry">
-            <input type="radio" id="horz" name="saveSize" value=3 onclick="sizeSaveChange(this.value)">
-            <label for="horz">Random</label>
+            <input type="radio" id="random" name="setFillStyle" value=3 onclick="setFillStyle(this.value)">
+            <label for="random">Mix</label>
           </div>
+        </div>
+
+        <div class="coupling2" id="textModeUI2">
+          <div class="coupling_label"><h3>Stroke</h3></div>
+          <input type="range" min="0" max="100" value="15" id="strokeWeight" oninput="setStrokeWeight(this.value)">
         </div>
       </div>
 

@@ -8,7 +8,9 @@ class Glitch {
     this.findTextSize();
 
     this.strokeOn = false;
-    if(random(10) < 5){
+    if(fillStyle == 1){
+      this.strokeOn = true;
+    } else if(fillStyle == 2 && random(10) < 5){
       this.strokeOn = true;
     }
 
@@ -148,7 +150,7 @@ class Glitch {
   
     if(this.strokeOn){
       this.pgA.stroke(foreColor);
-      this.pgA.strokeWeight(3);
+      this.pgA.strokeWeight(textStrokeWeight);
       this.pgA.fill(bkgdColor);
     } else {
       this.pgA.fill(foreColor);

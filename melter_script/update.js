@@ -101,3 +101,11 @@ function setYskew(val){
 function setYskewStart(val){
   ySkewStart = map(val, 0, 100, 0.01, 2);
 }
+
+function setFillStyle(val){
+  fillStyle = val;
+}
+
+function setStrokeWeight(val){
+  textStrokeWeight = map(val, 0, 100, 0.1, 20);
+}

@@ -56,6 +56,9 @@ let xSkew = 1.0;
 let ySkewStart = 1.0;
 let ySkew = 1.0;
 
+let fillStyle = 0;
+let textStrokeWeight = 3;
+
 function preload(){
   tFont[0] = loadFont("resources/Archivo-Light.ttf");
   tFont[1] = loadFont("resources/Archivo-Regular.ttf");
