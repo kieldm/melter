@@ -7,7 +7,8 @@ class Twist {
       this.strokeOn = true;
     }
 
-    this.currentFont = tFont[int(random(4))];
+    // this.currentFont = tFont[int(random(4))];
+    this.currentFont = currentFont;
     this.pgTextSize = 2;
     this.findTextSize();
 
@@ -19,6 +20,8 @@ class Twist {
     this.ramp = ramp_;
 
     this.yOutside = (height - this.pgA.height)/2;
+
+    this.yMax = map(intensity, 0, 100, 0, height);
 
     this. d = 1;
     if(random(10) < 5){
@@ -34,6 +37,9 @@ class Twist {
     this.bmr = createVector(this.pgA.width * 2/3, this.pgA.height);
     this.tr = createVector(this.pgA.width, 0);
     this.br = createVector(this.pgA.width, this.pgA.height);
+
+    this.thisXskew = 1.0;
+    this.thisYskew = 1.0;
   }
 
   update(){
@@ -49,28 +55,28 @@ class Twist {
       tk1 = easeOutExpo(tk0b);
       if(this.d == 1){
         a0 = 0;
-        b0 = -this.yOutside/2;
+        b0 = -this.yMax/2;
         a1 = this.pgA.height;
-        b1 = this.pgA.height + this.yOutside/2;
+        b1 = this.pgA.height + this.yMax/2;
       } else {
         a0 = this.pgA.height;
-        b0 = this.pgA.height + this.yOutside/2;
+        b0 = this.pgA.height + this.yMax/2;
         a1 = 0;
-        b1 = (this.d * this.yOutside)/2;
+        b1 = (this.d * this.yMax)/2;
       }
     } else {
       var tk0b = map(tk0, 0.5, 1, 0, 1);
       tk1 = easeInExpo(tk0b);
       if(this.d == 1){
-        a0 = -this.yOutside/2;
-        b0 = -this.yOutside;
-        a1 = this.pgA.height + this.yOutside/2;
-        b1 = this.pgA.height + this.yOutside;
+        a0 = -this.yMax/2;
+        b0 = -this.yMax;
+        a1 = this.pgA.height + this.yMax/2;
+        b1 = this.pgA.height + this.yMax;
       } else {
-        a0 = this.pgA.height + this.yOutside/2;
-        b0 = this.pgA.height + this.yOutside;
-        a1 = (this.d * this.yOutside)/2;
-        b1 = this.d * this.yOutside;
+        a0 = this.pgA.height + this.yMax/2;
+        b0 = this.pgA.height + this.yMax;
+        a1 = (this.d * this.yMax)/2;
+        b1 = this.d * this.yMax;
       }
     }
 
@@ -85,6 +91,18 @@ class Twist {
       this.tmr.y = map(tk1, 0, 1, a1, b1);
       this.tr.y = this.tmr.y;
     }
+
+    if(tk0 < 0.5){
+      var tk0b = map(tk0, 0, 0.5, 0, 1);
+      var tk1 = easeOutExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, xSkewStart, (xSkewStart + xSkew)/2);
+      this.thisYskew = map(tk1, 0, 1, ySkewStart, (ySkewStart + ySkew)/2);
+    } else {
+      var tk0b = map(tk0, 0.5, 1, 0, 1);
+      var tk1 = easeInExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, (xSkewStart + xSkew)/2, xSkew);
+      this.thisYskew = map(tk1, 0, 1, (ySkewStart + ySkew)/2, ySkew);
+    }
   }
 
   display(){
@@ -92,6 +110,9 @@ class Twist {
 
     push();
       translate(width/2, height/2);
+
+      scale(this.thisXskew, this.thisYskew);
+
       translate(-this.pgA.width/2, -this.pgA.height/2);
 
       texture(this.pgA);

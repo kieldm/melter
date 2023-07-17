@@ -2,7 +2,8 @@ class Scan {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
-    this.currentFont = tFont[int(random(4))];
+    // this.currentFont = tFont[int(random(4))];
+    this.currentFont = currentFont;
     this.pgTextSize = 2;
     this.findTextSize();
 
@@ -18,27 +19,39 @@ class Scan {
 
     this.ramp = ramp_;
 
-    this.res = 100;
+    this.res = 200;
     this.ySpace = this.pgA.height/this.res;
     
     this.xAnim = [];
     this.xAnimMax = [];
 
-    for(var m = 0; m < this.res; m++){
-      this.xAnim[m] = 0;
+    this.stackCount = floor(height/this.pgA.height) + 2;
 
-      var noiseCone = 0;
-      if(m < this.res/2){
-        var tk0 = map(m, 0, this.res/2, 0, 1);
-        noiseCone = map(easeInOutQuad(tk0), 0, 1, 0, -300);
-      } else {
-        var tk0 = map(m, this.res/2, this.res, 0, 1);
-        noiseCone = map(easeInOutQuad(tk0), 0, 1, -300, 0);
+    var noiseMax = map(intensity, 0, 100, 0, 600);
+    var noiseRes = map(intensity, 0, 100, 0.001, 0.08);
+
+    for(var p = 0; p < this.stackCount; p++){
+      this.xAnim[p] = [];
+      this.xAnimMax[p] = [];
+      for(var m = 0; m < this.res; m++){
+        this.xAnim[p][m] = 0;
+  
+        var noiseCone = 0;
+        if(m < this.res/2){
+          var tk0 = map(m, 0, this.res/2, 0, 1);
+          noiseCone = map(easeInOutQuad(tk0), 0, 1, 0, -noiseMax);
+        } else {
+          var tk0 = map(m, this.res/2, this.res, 0, 1);
+          noiseCone = map(easeInOutQuad(tk0), 0, 1, -noiseMax, 0);
+        }
+  
+        noiseDetail(2, 0.1);
+        this.xAnimMax[p][m] = map(noise((m + p * this.res) * noiseRes), 0, 1, -noiseCone, noiseCone);
       }
-
-      noiseDetail(2, 0.1);
-      this.xAnimMax[m] = map(noise(m * 0.06), 0, 1, -noiseCone, noiseCone);
     }
+
+    this.thisXskew = 1.0;
+    this.thisYskew = 1.0;
   }
 
   update(){
@@ -49,15 +62,31 @@ class Scan {
     if(tk0 < 0.5){
       var tk0b = map(tk0, 0, 0.5, 0, 1);
       tk1 = easeOutExpo(tk0b);
-      for(var m = 0; m < this.res; m++){
-        this.xAnim[m] = map(tk1, 0, 1, 0, this.xAnimMax[m]/2);
+      for(var p = 0; p < this.stackCount; p++){
+        for(var m = 0; m < this.res; m++){
+          this.xAnim[p][m] = map(tk1, 0, 1, 0, this.xAnimMax[p][m]/2);
+        }
       }
     } else {
       var tk0b = map(tk0, 0.5, 1, 0, 1);
       tk1 = easeInExpo(tk0b);
-      for(var m = 0; m < this.res; m++){
-        this.xAnim[m] = map(tk1, 0, 1, this.xAnimMax[m]/2, this.xAnimMax[m]);
+      for(var p = 0; p < this.stackCount; p++){
+        for(var m = 0; m < this.res; m++){
+          this.xAnim[p][m] = map(tk1, 0, 1, this.xAnimMax[p][m]/2, this.xAnimMax[p][m]);
+        }
       }
+    }
+
+    if(tk0 < 0.5){
+      var tk0b = map(tk0, 0, 0.5, 0, 1);
+      var tk1 = easeOutExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, xSkewStart, (xSkewStart + xSkew)/2);
+      this.thisYskew = map(tk1, 0, 1, ySkewStart, (ySkewStart + ySkew)/2);
+    } else {
+      var tk0b = map(tk0, 0.5, 1, 0, 1);
+      var tk1 = easeInExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, (xSkewStart + xSkew)/2, xSkew);
+      this.thisYskew = map(tk1, 0, 1, (ySkewStart + ySkew)/2, ySkew);
     }
   }
 
@@ -66,23 +95,33 @@ class Scan {
 
     push();
       translate(width/2, height/2);
+
+      scale(this.thisXskew, this.thisYskew);
+
       translate(-this.pgA.width/2, -this.pgA.height/2);
 
       noStroke();
       texture(this.pgA);
 
-      beginShape(TRIANGLE_STRIP);
-        for(var n = 0; n <= this.res; n++){
-          var xL = 0;
-          var xR = this.pgA.width;
-          var y = n * this.ySpace;
+      for(var m = 0; m < this.stackCount; m++){
+        push();
+          translate(0, -this.pgA.height * this.stackCount/2);
+          translate(0, this.pgA.height * m);
+          beginShape(TRIANGLE_STRIP);
+            for(var n = 0; n <= this.res; n++){
+              var xL = 0;
+              var xR = this.pgA.width;
+              var y = n * this.ySpace;
 
-          var v = map(n, 0, this.res, 0, 1);
+              var v = map(n, 0, this.res, 0, 1);
 
-          vertex(xL + this.xAnim[n], y, 0, v);
-          vertex(xR + this.xAnim[n], y, 1, v);
-        }
-      endShape();
+              vertex(xL + this.xAnim[m][n], y, 0, v);
+              vertex(xR + this.xAnim[m][n], y, 1, v);
+            }
+          endShape();
+        pop();
+      }
+
     pop();
   }
 
@@ -106,7 +145,7 @@ class Scan {
     textFont(this.currentFont);
     var repeatSize = round(textWidth(this.inp));
   
-    this.pgA = createGraphics(repeatSize, this.pgTextSize * (thisFontAdjust + 0.1));
+    this.pgA = createGraphics(repeatSize, this.pgTextSize * (thisFontAdjust + 0.02));
     // this.pgA.background(bkgdColor);
     
     if(this.strokeOn){

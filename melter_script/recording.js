@@ -36,6 +36,7 @@ function runRecording(){
   }
 }
 
+/////////////////////// MP4 SAVE
 function runSave(){
   setRecorder();
 
@@ -70,4 +71,37 @@ function setRecorder(){
       encoder.groupOfPictures = 10; // lower if you have fast actions.
       encoder.initialize();
   })
+}
+
+/////////////////////// GIF SAVE
+function runGifSave(){
+  numFrames = keyArray.length * sceneLength * sceneRepeats;
+
+  setGifRecorder();
+
+  coreCounter = 0;
+  selector = 0;
+
+  setText();
+  // pickScene();
+
+  // toggleRecMessage();
+}
+
+function setGifRecorder(){
+  resizeForSave();
+
+  pixelDensity(1);
+
+  cwidth = round(width/2) * 2;
+  cheight = round(height/2) * 2;
+
+
+  const options = {
+    units: "frames",
+    delay: 0,
+    notificationDuration: 2
+  }
+
+  saveGif('meltGif', numFrames, options);
 }

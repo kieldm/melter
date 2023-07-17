@@ -2,7 +2,8 @@ class Scatter {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
-    this.currentFont = tFont[int(random(4))];
+    // this.currentFont = tFont[int(random(4))];
+    this.currentFont = currentFont;
     this.pgTextSize = 2;
     this.findTextSize();
     
@@ -14,6 +15,16 @@ class Scatter {
     this.posFall = [];
     this.rotAnim = [];
     this.rotTarget = [];
+
+    this.xMin = map(intensity, 0, 100, 0, -2);
+    this.xMax = map(intensity, 0, 100, 0, 2);
+    this.yMin = map(intensity, 0, 100, 0, height/8);
+    this.yMax = map(intensity, 0, 100, 0, height/2);
+
+    this.rMax = map(intensity, 0, 100, 0, PI/4);
+    // var x = random(-textWidth(this.inp.charAt(n))/2, textWidth(this.inp.charAt(n))/2);
+    // var y = random(pgTextSize/8, pgTextSize * 1.5);
+
     this.setTargets();
 
     this.origin = createVector(0,0);
@@ -23,6 +34,9 @@ class Scatter {
     this.ramp = ramp_;
 
     this.pacer = (sceneLength/6)/this.inp.length;
+
+    this.thisXskew = 1.0;
+    this.thisYskew = 1.0;
   }
 
   update(){
@@ -45,6 +59,18 @@ class Scatter {
         this.rotAnim[n] = map(tk1, 0, 1, this.rotTarget[n], this.rotTarget[n] * 2);
       }
     }
+
+    if(tk0 < 0.5){
+      var tk0b = map(tk0, 0, 0.5, 0, 1);
+      var tk1 = easeOutExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, xSkewStart, (xSkewStart + xSkew)/2);
+      this.thisYskew = map(tk1, 0, 1, ySkewStart, (ySkewStart + ySkew)/2);
+    } else {
+      var tk0b = map(tk0, 0.5, 1, 0, 1);
+      var tk1 = easeInExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, (xSkewStart + xSkew)/2, xSkew);
+      this.thisYskew = map(tk1, 0, 1, (ySkewStart + ySkew)/2, ySkew);
+    }
   }
 
   display(){
@@ -64,6 +90,9 @@ class Scatter {
 
           translate(0, -this.pgTextSize * 0.7/2);
           rotate(this.rotAnim[n]);
+
+          scale(this.thisXskew, this.thisYskew);
+
           text(this.inp.charAt(n), 0, this.pgTextSize * 0.7/2);
         pop();
       }
@@ -86,11 +115,11 @@ class Scatter {
 
   setTargets(){
     for(var n = 0; n < this.inp.length; n++){
-      var x = random(-textWidth(this.inp.charAt(n))/2, textWidth(this.inp.charAt(n))/2);
+      var x = random(-textWidth(this.inp.charAt(n)) * this.xMin, textWidth(this.inp.charAt(n)) * this.xMax);
       if(n == 0 || n - this.inp.length - 1){
         x = 0;
       }
-      var y = random(pgTextSize/8, pgTextSize * 1.5);
+      var y = random(this.yMin, this.yMax);
 
       if(n%2 == 0){
         y *= -1;
@@ -98,7 +127,7 @@ class Scatter {
 
       this.posTarget[n] = createVector(x,y);
       this.posFall[n] = createVector(this.posTarget[n].x, this.posTarget[n].y + random(height/8, 2 *height));
-      this.rotTarget[n] = random(-PI/8, PI/8);
+      this.rotTarget[n] = random(-this.rMax, this.rMax);
     }
   }
 

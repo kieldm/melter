@@ -8,7 +8,8 @@ class Shutters2 {
       this.strokeOn = true;
     }
 
-    this.currentFont = tFont[int(random(4))];
+    // this.currentFont = tFont[int(random(4))];
+    this.currentFont = currentFont;
     this.pgTextSize = 2;
     this.findTextSize();
     

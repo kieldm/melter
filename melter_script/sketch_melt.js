@@ -9,7 +9,8 @@ var fullMainWidth;
 var budgeCenter = 0;
 
 var mainFlash;
-var sceneLength = 30;
+// var sceneLength = 30;
+var sceneLength = 45;
 
 var starterText = "MELT\nWITH\nNETFLIX";
 
@@ -23,6 +24,8 @@ var thisFontAdjustUp = -0.2;
 var flashCount = 15;
 var sceneOn = [];
 var sceneCount = flashCount;
+
+var selectedFont;
 
 var widgetOn = true;
 
@@ -47,11 +50,19 @@ let sHold = 0;
 
 let trackFactor = 0.06;
 
+let intensity = 50;
+let xSkewStart = 1.0;
+let xSkew = 1.0;
+let ySkewStart = 1.0;
+let ySkew = 1.0;
+
 function preload(){
   tFont[0] = loadFont("resources/Archivo-Light.ttf");
   tFont[1] = loadFont("resources/Archivo-Regular.ttf");
   tFont[2] = loadFont("resources/Archivo-Medium.ttf");
   tFont[3] = loadFont("resources/Archivo-SemiBold.ttf");
+  tFont[4] = loadFont("resources/Archivo-Bold.ttf");
+  tFont[5] = loadFont("resources/Archivo-Black.ttf");
 
   currentFont = tFont[1];
   thisFontAdjust = 0.7;
@@ -134,37 +145,37 @@ function pickScene(){
       } else if(rs0 > 30 && rs0 < 40 && sceneOn[3]){
         mainFlash = new Shutters(rampCounter%2, currentText);
         sceneSelecting = false;
+      // } else if(rs0 > 40 && rs0 < 50 && sceneOn[4]){
+      //   mainFlash = new Shutters2(rampCounter%2, currentText);
+      //   sceneSelecting = false;
       } else if(rs0 > 40 && rs0 < 50 && sceneOn[4]){
-        mainFlash = new Shutters2(rampCounter%2, currentText);
-        sceneSelecting = false;
-      } else if(rs0 > 50 && rs0 < 60 && sceneOn[5]){
         mainFlash = new SlotMachine(rampCounter%2, currentText);
         sceneSelecting = false;
-      } else if(rs0 > 60 && rs0 < 70 && sceneOn[6]){
+      } else if(rs0 > 50 && rs0 < 60 && sceneOn[5]){
         mainFlash = new Snap(rampCounter%2, currentText);
+        sceneSelecting = false;
+      } else if(rs0 > 60 && rs0 <= 70 && sceneOn[6]) {
+        mainFlash = new Twist(rampCounter%2, currentText);
         sceneSelecting = false;
       } else if(rs0 > 70 && rs0 < 80 && sceneOn[7]){
         mainFlash = new Split(rampCounter%2, currentText);
         sceneSelecting = false;
       } else if(rs0 > 80 && rs0 <= 90 && sceneOn[8]) {
-        mainFlash = new Twist(rampCounter%2, currentText);
-        sceneSelecting = false;
-      } else if(rs0 > 90 && rs0 <= 100 && sceneOn[9]) {
         mainFlash = new Droop(rampCounter%2, currentText);
         sceneSelecting = false;
-      } else if(rs0 > 100 && rs0 <= 110 && sceneOn[10]) {
+      } else if(rs0 > 90 && rs0 <= 100 && sceneOn[9]) {
         mainFlash = new Glitch(rampCounter%2, currentText);
         sceneSelecting = false;
-      } else if(rs0 > 110 && rs0 <= 120 && sceneOn[11]) {
+      } else if(rs0 > 100 && rs0 <= 110 && sceneOn[10]) {
         mainFlash = new Scatter(rampCounter%2, currentText);
         sceneSelecting = false;
-      } else if(rs0 > 120 && rs0 <= 130 && sceneOn[12]) {
+      } else if(rs0 > 110 && rs0 <= 120 && sceneOn[11]) {
         mainFlash = new Scan(rampCounter%2, currentText);
         sceneSelecting = false;
-      } else if(rs0 > 130 && rs0 <= 140 && sceneOn[13]) {
-        mainFlash = new OddOne(rampCounter%2, currentText);
-        sceneSelecting = false;
-      } else if(rs0 > 140 && rs0 <= 150 && sceneOn[14]) {
+      // } else if(rs0 > 130 && rs0 <= 140 && sceneOn[13]) {
+      //   mainFlash = new OddOne(rampCounter%2, currentText);
+      //   sceneSelecting = false;
+      } else if(rs0 > 120 && rs0 <= 130 && sceneOn[12]) {
         mainFlash = new SlitScan(rampCounter%2, currentText);
         sceneSelecting = false;
       } else {

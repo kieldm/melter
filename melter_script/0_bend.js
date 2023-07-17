@@ -2,7 +2,8 @@ class Bend {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
-    this.currentFont = tFont[int(random(4))];
+    // this.currentFont = tFont[int(random(4))];
+    this.currentFont = currentFont;
     this.pgTextSize = 2;
     this.findTextSize();
 
@@ -18,43 +19,51 @@ class Bend {
 
     this.ramp = ramp_;
 
-    this.res = 200;
+    this.res = 1000;
     this.xSpace = this.pgA.width/this.res;
     this.yTopAnim;
     this.yBotAnim;
 
-    this.yTopCorner = (height - this.pgA.height)/2;
-    this.yBotCorner = (height - this.pgA.height)/2 + this.pgA.height;
+    // this.yTopCorner = -(height - this.pgA.height)/2;
+    // this.yBotCorner = (height - this.pgA.height)/2;
+
+    this.yTopCorner = map(intensity, 0, 100, 0, -height);
+    this.yBotCorner = map(intensity, 0, 100, 0, height);
+
+    this.thisXskew = 1.0;
+    this.thisYskew = 1.0;
   }
 
   update(){
     this.ticker ++;
 
     var tk0 = map(this.ticker, 0, sceneLength, 0, 1);
-    var tk1;
 
-    let a0, b0;
-    let a1, b1;
     if(tk0 < 0.5){
       var tk0b = map(tk0, 0, 0.5, 0, 1);
-      tk1 = easeOutExpo(tk0b);
-      a0 = 0;
-      b0 = -this.yTopCorner/2;
+      var tk1 = easeOutExpo(tk0b);
 
-      a1 = this.pgA.height;
-      b1 = (this.yBotCorner + this.pgA.height)/2;
+      this.yTopAnim = map(tk1, 0, 1, 0, this.yTopCorner/2);
+      this.yBotAnim = map(tk1, 0, 1, this.pgA.height, this.pgA.height + this.yBotCorner/2);
     } else {
       var tk0b = map(tk0, 0.5, 1, 0, 1);
-      tk1 = easeInExpo(tk0b);
-      a0 = -this.yTopCorner/2;
-      b0 = -this.yTopCorner;
+      var tk1 = easeInExpo(tk0b);
 
-      a1 = (this.yBotCorner + this.pgA.height)/2;
-      b1 = this.yBotCorner;
+      this.yTopAnim = map(tk1, 0, 1, this.yTopCorner/2, this.yTopCorner);
+      this.yBotAnim = map(tk1, 0, 1, this.pgA.height + this.yBotCorner/2, this.pgA.height + this.yBotCorner);
     }
 
-    this.yTopAnim = map(tk1, 0, 1, a0, b0);
-    this.yBotAnim = map(tk1, 0, 1, a1, b1);
+    if(tk0 < 0.5){
+      var tk0b = map(tk0, 0, 0.5, 0, 1);
+      var tk1 = easeOutExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, xSkewStart, (xSkewStart + xSkew)/2);
+      this.thisYskew = map(tk1, 0, 1, ySkewStart, (ySkewStart + ySkew)/2);
+    } else {
+      var tk0b = map(tk0, 0.5, 1, 0, 1);
+      var tk1 = easeInExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, (xSkewStart + xSkew)/2, xSkew);
+      this.thisYskew = map(tk1, 0, 1, (ySkewStart + ySkew)/2, ySkew);
+    }
   }
 
   display(){
@@ -62,6 +71,9 @@ class Bend {
 
     push();
       translate(width/2, height/2);
+      // scale(xSkew, ySkew);
+      scale(this.thisXskew, this.thisYskew);
+
       translate(-this.pgA.width/2, -this.pgA.height/2);
 
       noStroke();

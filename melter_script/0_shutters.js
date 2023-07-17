@@ -3,7 +3,8 @@ class Shutters {
     this.inp = inp_;
 
     this.track = -20;
-    this.currentFont = tFont[int(random(4))];
+    // this.currentFont = tFont[int(random(4))];
+    this.currentFont = currentFont;
     this.pgTextSize = 2;
     this.findTextSize();
     
@@ -29,6 +30,9 @@ class Shutters {
     this.ramp = ramp_;
 
     this.pacer = (sceneLength/4)/this.inp.length;
+
+    this.thisXskew = 1.0;
+    this.thisYskew = 1.0;
   }
 
   update(){
@@ -68,7 +72,21 @@ class Shutters {
       this.shutterAnimBot[n] = map(tk1, 0, 1, a1, b1);
       this.shutterYanim[n] = map(tk1, 0, 1, a2, b2);
     }
+
+    if(tk0 < 0.5){
+      var tk0b = map(tk0, 0, 0.5, 0, 1);
+      var tk1 = easeOutExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, xSkewStart, (xSkewStart + xSkew)/2);
+      this.thisYskew = map(tk1, 0, 1, ySkewStart, (ySkewStart + ySkew)/2);
+    } else {
+      var tk0b = map(tk0, 0.5, 1, 0, 1);
+      var tk1 = easeInExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, (xSkewStart + xSkew)/2, xSkew);
+      this.thisYskew = map(tk1, 0, 1, (ySkewStart + ySkew)/2, ySkew);
+    }
   }
+
+
 
   display(){
     background(bkgdColor);
@@ -78,7 +96,11 @@ class Shutters {
 
       for(var n = 0; n < this.inp.length; n++){
         push();
-          translate(this.xSpots[n], this.shutterYanim[n]);
+          translate(this.xSpots[n], this.shutterYanim[n], n);
+
+          translate(this.pg[n].width/2, -(this.shutterAnim[n] - this.shutterAnimBot[n])/2);
+          scale(this.thisXskew, this.thisYskew);
+          translate(-this.pg[n].width/2, (this.shutterAnim[n] - this.shutterAnimBot[n])/2);
 
           texture(this.pg[n]);
           noStroke();
@@ -140,7 +162,7 @@ class Shutters {
       if(this.strokeOn){
         this.pg[n].stroke(foreColor);
         this.pg[n].strokeWeight(3);
-        this.pg[n].noFill();
+        this.pg[n].fill(bkgdColor);
       } else {
         this.pg[n].fill(foreColor);
         this.pg[n].noStroke();

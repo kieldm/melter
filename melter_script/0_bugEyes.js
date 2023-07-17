@@ -8,7 +8,8 @@ class BugEyes {
     }
 
     this.track = -20;
-    this.currentFont = tFont[int(random(4))];
+    // this.currentFont = tFont[int(random(4))];
+    this.currentFont = currentFont;
     this.repeats;
     this.pgTextSize = 2;
     this.findTextSize();
@@ -30,6 +31,9 @@ class BugEyes {
     this.ramp = ramp_;
 
     this.pacer = (sceneLength/2)/this.inp.length;
+
+    this.thisXskew = 1.0;
+    this.thisYskew = 1.0;
   }
 
   update(){
@@ -64,6 +68,18 @@ class BugEyes {
         this.shutterAnimBot[n][p] = map(tk1, 0, 1, a1, b1);
       }
     }
+
+    if(tk0 < 0.5){
+      var tk0b = map(tk0, 0, 0.5, 0, 1);
+      var tk1 = easeOutExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, xSkewStart, (xSkewStart + xSkew)/2);
+      this.thisYskew = map(tk1, 0, 1, ySkewStart, (ySkewStart + ySkew)/2);
+    } else {
+      var tk0b = map(tk0, 0.5, 1, 0, 1);
+      var tk1 = easeInExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, (xSkewStart + xSkew)/2, xSkew);
+      this.thisYskew = map(tk1, 0, 1, (ySkewStart + ySkew)/2, ySkew);
+    }
   }
 
   display(){
@@ -82,7 +98,13 @@ class BugEyes {
 
           for(var p = 0; p < this.repeats; p++){
             push();
-              translate(this.xSpots[n], p * this.pg[n].height);
+              translate(this.xSpots[n], p * this.pg[n].height, p * 2);
+              
+              translate(this.pg[n].width/2, -(this.shutterAnim[n][p] - this.shutterAnimBot[n][p])/2);
+              // scale(xSkew, ySkew);
+              scale(this.thisXskew, this.thisYskew);
+              translate(-this.pg[n].width/2, (this.shutterAnim[n][p] - this.shutterAnimBot[n][p])/2);
+
               texture(this.pg[n]);
 
               var vTop = map(this.shutterAnimBot[n][p], 0, this.pg[n].height, 1, 0);
@@ -155,6 +177,7 @@ class BugEyes {
       this.pg[n].textAlign(CENTER);
       this.pg[n].textFont(this.currentFont);
       var thisAdjust = this.pg[n].height/2 + this.pgTextSize * thisFontAdjust/2 + this.pgTextSize * thisFontAdjustUp;
+      
       this.pg[n].text(this.inp.charAt(n), this.pg[n].width/2, thisAdjust);
     }
 

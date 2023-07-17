@@ -3,7 +3,8 @@ class SlotMachine {
     this.inp = inp_;
 
     this.track = -20;
-    this.currentFont = tFont[int(random(4))];
+    // this.currentFont = tFont[int(random(4))];
+    this.currentFont = currentFont;
     this.repeats = 2;
     this.pgTextSize = 2;
     this.findTextSize();
@@ -11,13 +12,13 @@ class SlotMachine {
     this.track = -this.pgTextSize * trackFactor;
     this.trackFix = -(this.inp.length - 1) * this.track/2;
     this.xSpots = [];
+    this.widthSpots = [];
     this.findXpos();
 
     this.yAnim = [];
     this.yTarget = [];
     this.yStart = 50;
-    this.yMin = 0;
-    this.yMax = -150;
+    this.yTargetMax = map(intensity, 0, 100, 0, this.pgTextSize*4);
     this.setYtarget();
 
     this.ticker = 0;
@@ -31,6 +32,9 @@ class SlotMachine {
     if(random(10) < 5){
       this.strokeOn = true;
     }
+
+    this.thisXskew = 1.0;
+    this.thisYskew = 1.0;
   }
 
   update(){
@@ -54,6 +58,18 @@ class SlotMachine {
 
       this.yAnim[n] = map(tk1, 0, 1, a0, b0);
     }
+
+    if(tk0 < 0.5){
+      var tk0b = map(tk0, 0, 0.5, 0, 1);
+      var tk1 = easeOutExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, xSkewStart, (xSkewStart + xSkew)/2);
+      this.thisYskew = map(tk1, 0, 1, ySkewStart, (ySkewStart + ySkew)/2);
+    } else {
+      var tk0b = map(tk0, 0.5, 1, 0, 1);
+      var tk1 = easeInExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, (xSkewStart + xSkew)/2, xSkew);
+      this.thisYskew = map(tk1, 0, 1, (ySkewStart + ySkew)/2, ySkew);
+    }
   }
 
   display(){
@@ -73,7 +89,16 @@ class SlotMachine {
 
           translate(0, -this.repeats*(this.pgTextSize*0.8)/2);
           for(var p = 0; p < this.repeats; p++){
-            text(this.inp.charAt(n), 0, p * this.pgTextSize * 0.8);
+            push();
+              translate(0, p * this.pgTextSize * 0.8);
+              push();
+                translate(this.widthSpots[n]/2, -this.pgTextSize * 0.8/2);
+                scale(this.thisXskew, this.thisYskew);
+                translate(-this.widthSpots[n]/2,  this.pgTextSize * 0.8/2);
+
+                text(this.inp.charAt(n), 0, this.pgTextSize * 0.8);
+              pop();
+            pop();
           }
         pop();
       }
@@ -87,16 +112,16 @@ class SlotMachine {
     var xStart = width/2 - fullSize/2;
 
     for(var n = 0; n < this.inp.length; n++){
-      var thisLetterWidth = textWidth(this.inp.charAt(n));
+      this.widthSpots[n] = textWidth(this.inp.charAt(n));
       var upUntilWidth = textWidth(this.inp.slice(0,n+1));
-      var difference = upUntilWidth - thisLetterWidth;
+      var difference = upUntilWidth - this.widthSpots[n];
       this.xSpots[n] = xStart + difference + n * this.track;
     }
   }
 
   setYtarget(){
     for(var n = 0; n < this.inp.length; n++){
-      this.yTarget[n] = random(-this.pgTextSize*2, this.pgTextSize*2);;
+      this.yTarget[n] = random(-this.yTargetMax, this.yTargetMax);
     }
   }
 
@@ -114,7 +139,7 @@ class SlotMachine {
       this.pgTextSize = (height * 7/8)/thisFontAdjust;
     }
 
-    this.repeats = round((height*2)/this.pgTextSize) + 5;
+    this.repeats = round((height*2)/this.pgTextSize) + 7;
   }
 
   removeGraphics(){

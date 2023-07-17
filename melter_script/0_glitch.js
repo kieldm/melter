@@ -2,7 +2,8 @@ class Glitch {
   constructor(ramp_, inp_){
     this.inp = inp_;
 
-    this.currentFont = tFont[int(random(4))];
+    // this.currentFont = tFont[int(random(4))];
+    this.currentFont = currentFont;
     this.pgTextSize = 2;
     this.findTextSize();
 
@@ -24,17 +25,27 @@ class Glitch {
     this.animX = [];
   
     var culmH = 0;
+    var culmX = 0;
     while(culmH < 1){
-      this.splitH[this.splitCount] = random(0.3);
-      this.animXmax[this.splitCount] = random(-width/32 * this.splitCount, width/32 * this.splitCount);
+      // this.splitH[this.splitCount] = random(0.15);
+      this.splitH[this.splitCount] = 0.08;
+      this.animXmax[this.splitCount] = culmX;
       this.animX[this.splitCount] = 0;
 
       culmH += this.splitH[this.splitCount];
+
+      var min = map(intensity, 0, 100, 0, this.splitCount * 2);
+      var max = map(intensity, 0, 100, 0, this.splitCount * 16);
+      culmX += random(min, max);
+
       this.splitCount ++;
     }
 
     var remainder = culmH - this.splitH[this.splitCount];
     this.splitH[this.splitCount] = 1 - remainder;
+
+    this.thisXskew = 1.0;
+    this.thisYskew = 1.0;
   }
 
   update(){
@@ -58,6 +69,18 @@ class Glitch {
       }
       this.animX[m] = map(tk1, 0, 1, a, b);
     }
+
+    if(tk0 < 0.5){
+      var tk0b = map(tk0, 0, 0.5, 0, 1);
+      var tk1 = easeOutExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, xSkewStart, (xSkewStart + xSkew)/2);
+      this.thisYskew = map(tk1, 0, 1, ySkewStart, (ySkewStart + ySkew)/2);
+    } else {
+      var tk0b = map(tk0, 0.5, 1, 0, 1);
+      var tk1 = easeInExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, (xSkewStart + xSkew)/2, xSkew);
+      this.thisYskew = map(tk1, 0, 1, (ySkewStart + ySkew)/2, ySkew);
+    }
   }
 
   display(){
@@ -66,8 +89,12 @@ class Glitch {
     push();
       translate(width/2, height/2);
 
-      scale(0.75);
+      scale(this.thisXskew, this.thisYskew);
+
+      // scale(0.75);
       translate(-this.pgA.width/2, -this.pgA.height/2);
+
+      translate(-this.animX[this.splitCount - 1]/2, 0);
 
       texture(this.pgA);
       // stroke(0,0,255);
@@ -82,9 +109,9 @@ class Glitch {
           translate(this.animX[m], culmH);
           beginShape(TRIANGLE_STRIP);
             vertex(0, 0, 0, vTop);
-            vertex(0, this.pgA.height * this.splitH[m], 0, vBot);
+            vertex(this.animX[m] * 0.75, this.pgA.height * this.splitH[m], 0, vBot);
             vertex(this.pgA.width, 0, 1, vTop);
-            vertex(this.pgA.width, this.pgA.height * this.splitH[m], 1, vBot);
+            vertex(this.pgA.width + this.animX[m] * 0.75, this.pgA.height * this.splitH[m], 1, vBot);
           endShape();
         pop();
 

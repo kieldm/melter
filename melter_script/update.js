@@ -15,6 +15,10 @@ function setSceneLength(val){
   sceneLength = int(val);
 }
 
+function setIntensity(val){
+  intensity = val;
+}
+
 function hideWidget(){
   widgetOn = !widgetOn;
 
@@ -33,7 +37,7 @@ function clearAllScenes(){
   document.getElementById('bend').checked = false;
   document.getElementById('bugeyes').checked = false;
   document.getElementById('shutters').checked = false;
-  document.getElementById('shutters2').checked = false;
+  // document.getElementById('shutters2').checked = false;
   document.getElementById('slotmachine').checked = false;
   document.getElementById('snap').checked = false;
   document.getElementById('split').checked = false;
@@ -42,7 +46,7 @@ function clearAllScenes(){
   document.getElementById('glitch').checked = false;
   document.getElementById('scatter').checked = false;
   document.getElementById('scan').checked = false;
-  document.getElementById('oddone').checked = false;
+  // document.getElementById('oddone').checked = false;
   document.getElementById('slitscan').checked = false;
 
   sceneCount = 0;
@@ -57,6 +61,10 @@ function setScene(val){
       sceneCount++;
     }
   }
+}
+
+function setFont(val){
+  currentFont = tFont[val];
 }
 
 function toggleRecMessage(){
@@ -76,4 +84,20 @@ function setSceneRepeats(val){
 function sizeSaveChange(val){
   saveMode = val;
   resizeForPreview();
+}
+
+function setXskew(val){
+  xSkew = map(val, 0, 100, 0.01, 2);
+}
+
+function setXskewStart(val){
+  xSkewStart = map(val, 0, 100, 0.01, 2);
+}
+
+function setYskew(val){
+  ySkew = map(val, 0, 100, 0.01, 2);
+}
+
+function setYskewStart(val){
+  ySkewStart = map(val, 0, 100, 0.01, 2);
 }

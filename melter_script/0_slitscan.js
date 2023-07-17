@@ -7,7 +7,8 @@ class SlitScan {
       this.strokeOn = true;
     }
 
-    this.currentFont = tFont[int(random(4))];
+    // this.currentFont = tFont[int(random(4))];
+    this.currentFont = currentFont;
     this.pgTextSize = 2;
     this.findTextSize();
 
@@ -27,14 +28,19 @@ class SlitScan {
     this.vSpace = [];
     this.vSpaceMin = [];
     this.vSpaceMax = [];
+
+    this.vSpaceMaxFactor = map(intensity, 0, 100, 0.001, 2);
+
     for(var m = 0; m < this.res; m++){
       this.vSpaceMin[m] = map(m, 0, this.res, 0, 1);
       // this.vSpaceMax[m] = this.vSpaceMin[m] + map(noise(m * 0.5), 0, 1, -0.1, 0.1);
       var taper0 = map(m, 0, this.res, 0, TWO_PI);
       var taper1 = map(cos(taper0), 1, -1, 0, 1);
-      this.vSpaceMax[m] = this.vSpaceMin[m] + map(noise(m * 0.05), 0, 1, -this.vSpaceMin[m] * taper1, (1 - this.vSpaceMin[m]) * taper1);
+      this.vSpaceMax[m] = this.vSpaceMin[m] + map(noise(m * 0.05), 0, 1, -this.vSpaceMin[m] * this.vSpaceMaxFactor * taper1, (1 - this.vSpaceMin[m]) * this.vSpaceMaxFactor * taper1);
     }
 
+    this.thisXskew = 1.0;
+    this.thisYskew = 1.0;
   }
 
   update(){
@@ -43,7 +49,6 @@ class SlitScan {
     var tk0 = map(this.ticker, 0, sceneLength, 0, 1);
     var tk1;
     var a0, a1;
-    var b0, b1;
 
     if(tk0 < 0.5){
       var tk0b = map(tk0, 0, 0.5, 0, 1);
@@ -55,11 +60,10 @@ class SlitScan {
       for(var m = 0; m < this.res; m++){
         var taper0 = map(m, 0, this.res, 0, TWO_PI);
         var taper1 = map(cos(taper0), 1, -1, 0, 1);
-        this.vSpaceMax[m] = this.vSpaceMin[m] + map(noise(m * 0.02 + frameCount * 0.03), 0, 1, -this.vSpaceMin[m] * taper1, (1 - this.vSpaceMin[m]) * taper1);
+        this.vSpaceMax[m] = this.vSpaceMin[m] + map(noise((m + frameCount) * 0.02), 0, 1, -this.vSpaceMin[m] * this.vSpaceMaxFactor * taper1, (1 - this.vSpaceMin[m]) * this.vSpaceMaxFactor * taper1);
 
         this.vSpace[m] = map(tk1, 0, 1, this.vSpaceMin[m], this.vSpaceMax[m]);
       }
-
     } else {
       var tk0b = map(tk0, 0.5, 1, 0, 1);
       tk1 = easeInExpo(tk0b);
@@ -70,10 +74,22 @@ class SlitScan {
       for(var m = 0; m < this.res; m++){
         var taper0 = map(m, 0, this.res, 0, TWO_PI);
         var taper1 = map(cos(taper0), 1, -1, 0, 1);
-        this.vSpaceMax[m] = this.vSpaceMin[m] + map(noise(m * 0.02 + frameCount * 0.03), 0, 1, -this.vSpaceMin[m] * taper1, (1 - this.vSpaceMin[m]) * taper1);
+        this.vSpaceMax[m] = this.vSpaceMin[m] + map(noise((m + frameCount) * 0.02), 0, 1, -this.vSpaceMin[m] * this.vSpaceMaxFactor * taper1, (1 - this.vSpaceMin[m]) * this.vSpaceMaxFactor * taper1);
 
         this.vSpace[m] = map(tk1, 0, 1, this.vSpaceMax[m], this.vSpaceMin[m]);
       }
+    }
+
+    if(tk0 < 0.5){
+      var tk0b = map(tk0, 0, 0.5, 0, 1);
+      var tk1 = easeOutExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, xSkewStart, (xSkewStart + xSkew)/2);
+      this.thisYskew = map(tk1, 0, 1, ySkewStart, (ySkewStart + ySkew)/2);
+    } else {
+      var tk0b = map(tk0, 0.5, 1, 0, 1);
+      var tk1 = easeInExpo(tk0b);
+      this.thisXskew = map(tk1, 0, 1, (xSkewStart + xSkew)/2, xSkew);
+      this.thisYskew = map(tk1, 0, 1, (ySkewStart + ySkew)/2, ySkew);
     }
 
     this.ySpace = map(tk1, 0, 1, a0, a1);
@@ -84,6 +100,9 @@ class SlitScan {
 
     push();
       translate(width/2, height/2);
+      
+      scale(this.thisXskew, this.thisYskew);
+
       translate(-this.pgA.width/2, -(this.res * this.ySpace)/2);
 
       texture(this.pgA);
