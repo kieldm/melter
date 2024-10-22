@@ -59,6 +59,8 @@ let ySkew = 1.0;
 let fillStyle = 0;
 let textStrokeWeight = 3;
 
+let tFontFactor = 0.7;
+
 function preload(){
   tFont[0] = loadFont("resources/Archivo-Light.ttf");
   tFont[1] = loadFont("resources/Archivo-Regular.ttf");
@@ -66,6 +68,7 @@ function preload(){
   tFont[3] = loadFont("resources/Archivo-SemiBold.ttf");
   tFont[4] = loadFont("resources/Archivo-Bold.ttf");
   tFont[5] = loadFont("resources/Archivo-Black.ttf");
+  tFont[6] = loadFont("resources/Anton-Regular.ttf");
 
   currentFont = tFont[1];
   thisFontAdjust = 0.7;

@@ -65,6 +65,12 @@ function setScene(val){
 
 function setFont(val){
   currentFont = tFont[val];
+
+  if(val == 6){
+    thisFontAdjust = 0.85;
+  } else {
+    thisFontAdjust = 0.7;
+  }
 }
 
 function toggleRecMessage(){

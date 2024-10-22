@@ -94,11 +94,11 @@ class SlotMachine {
             push();
               translate(0, p * this.pgTextSize * 0.8);
               push();
-                translate(this.widthSpots[n]/2, -this.pgTextSize * 0.8/2);
+                translate(this.widthSpots[n]/2, -(thisFontAdjust + 0.1)/2);
                 scale(this.thisXskew, this.thisYskew);
-                translate(-this.widthSpots[n]/2,  this.pgTextSize * 0.8/2);
+                translate(-this.widthSpots[n]/2,  (thisFontAdjust + 0.1)/2);
 
-                text(this.inp.charAt(n), 0, this.pgTextSize * 0.8);
+                text(this.inp.charAt(n), 0, this.pgTextSize * (thisFontAdjust + 0.1));
               pop();
             pop();
           }
