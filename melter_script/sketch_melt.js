@@ -62,15 +62,35 @@ let textStrokeWeight = 3;
 let tFontFactor = 0.7;
 
 function preload(){
-  tFont[0] = loadFont("resources/Archivo-Light.ttf");
-  tFont[1] = loadFont("resources/Archivo-Regular.ttf");
-  tFont[2] = loadFont("resources/Archivo-Medium.ttf");
-  tFont[3] = loadFont("resources/Archivo-SemiBold.ttf");
-  tFont[4] = loadFont("resources/Archivo-Bold.ttf");
-  tFont[5] = loadFont("resources/Archivo-Black.ttf");
-  tFont[6] = loadFont("resources/Anton-Regular.ttf");
+  tFont[0] = loadFont("resources/HelveticaNeue-Bold.ttf");
+  tFont[1] = loadFont("resources/HelveticaNeue-BoldItalic.ttf");
+  tFont[2] = loadFont("resources/HelveticaNeue-CondensedBlack.ttf");
+  tFont[3] = loadFont("resources/HelveticaNeue-CondensedBold.ttf");
+  tFont[4] = loadFont("resources/HelveticaNeue-Italic.ttf");
+  tFont[5] = loadFont("resources/HelveticaNeue-Light.otf");
+  tFont[6] = loadFont("resources/HelveticaNeue-LightItalic.ttf");
+  tFont[7] = loadFont("resources/HelveticaNeue-Medium.otf");
+  tFont[8] = loadFont("resources/HelveticaNeue-MediumCond.otf");
+  // tFont[9] = loadFont("resources/HelveticaNeue-MediumItalic.ttc");
+  tFont[9] = loadFont("resources/HelveticaNeue-Thin.otf");
+  tFont[10] = loadFont("resources/HelveticaNeue-ThinItalic.otf");
+  tFont[11] = loadFont("resources/HelveticaNeue-UltraLight.ttf");
+  tFont[12] = loadFont("resources/HelveticaNeue-UltraLightItalic.ttf");
+  // tFont[14] = loadFont("resources/HelveticaNeue.ttc");
+  tFont[13] = loadFont("resources/HelveticaNeueBlackCondensed.ttf");
 
-  currentFont = tFont[1];
+  tFont[14] = loadFont("resources/TriestDT-Roman.otf");
+
+  tFont[15] = loadFont("resources/BallingerMono-Black.otf");
+  tFont[16] = loadFont("resources/BallingerMono-Bold.otf");
+  tFont[17] = loadFont("resources/BallingerMono-Light.otf");
+  tFont[18] = loadFont("resources/BallingerMono-Medium.otf");
+  tFont[19] = loadFont("resources/BallingerMono-Regular.otf");
+  tFont[20] = loadFont("resources/BallingerMono-Thin.otf");
+  tFont[21] = loadFont("resources/BallingerMono-XBold.otf");
+  tFont[22] = loadFont("resources/BallingerMono-XLight.otf");
+
+  currentFont = tFont[7];
   thisFontAdjust = 0.7;
   thisFontAdjustUp = 0;
 }
